@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy Credit & Dues Collection Tracker - Mediwave Life Sciences</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+  <!-- ================= LOGINGATE CONTAINER ================= -->
+  <div id="login-gate" class="login-container">
+    <div class="login-glow"></div>
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo-badge"><i class="fa-solid fa-wave-square"></i></div>
+        <h2>Mediwave</h2>
+        <p>Life Sciences Pvt Ltd</p>
+        <span>Credit & Dues Collection Portal</span>
+      </div>
+      <!-- LOGIN FORM -->
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="login-email" class="input-control" placeholder="yourname@gmail.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Portal Access Key</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="login-password" class="input-control" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div id="login-error" class="login-error-msg" style="display: none;">
+          <i class="fa-solid fa-circle-exclamation"></i> <span id="login-error-text">Wrong credentials. Please check your email and password.</span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="btn-login">
+          <span>Authenticate & Access</span> <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+        <p class="toggle-form-text" style="font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:16px;">
+          Need an account? <span class="toggle-link" id="auth-switch-btn" style="color:var(--primary); cursor:pointer; font-weight:600;">Sign Up</span>
+        </p>
+      </form>
+
+      <!-- SIGN UP FORM (Initially Hidden) -->
+      <form id="signup-form" style="display: none;">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="signup-name" class="input-control" placeholder="Vikram Reddy" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="signup-email" class="input-control" placeholder="yourname@gmail.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Portal Access Key</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="signup-password" class="input-control" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div id="signup-error" class="login-error-msg" style="display: none;">
+          <!-- Content injected dynamically -->
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="btn-signup">
+          <span>Register Account</span> <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <p class="toggle-form-text" style="font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:16px;">
+          Already registered? <span class="toggle-link" id="auth-switch-back-btn" style="color:var(--primary); cursor:pointer; font-weight:600;">Log In</span>
+        </p>
+      </form>
+
+      <div class="login-footer">
+        <p>Protected by Enterprise Cryptographic RBAC Guard</p>
+        <span class="seed-tip" id="seed-tip-toggle"><i class="fa-solid fa-lightbulb"></i> View Demo Credentials</span>
+        <div class="seed-credentials" id="seed-details" style="display: none;">
+          <div class="seed-row"><strong>Admin:</strong> admin@gmail.com / AdminPassword123</div>
+          <div class="seed-row" style="font-size: 11px; margin-top: 4px; color: var(--text-secondary);"><strong>Users:</strong> Register your own account with "Sign Up" to login!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APP CONTAINER ================= -->
+  <div id="app-layout" class="app-layout-wrapper" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><i class="fa-solid fa-wave-square"></i></div>
+        <div class="brand-info">
+          <h1>Mediwave</h1>
+          <span>Credit Tracker</span>
+        </div>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <!-- Admin-Only Links -->
+        <li class="admin-only">
+          <a href="#" class="sidebar-item active" data-view="admin-dashboard">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Controller Desk</span>
+          </a>
+        </li>
+        <!-- Representative-Only Links -->
+        <li class="user-only">
+          <a href="#" class="sidebar-item" data-view="user-workspace">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Field Workspace</span>
+          </a>
+        </li>
+        <!-- Shared Views -->
+        <li>
+          <a href="#" class="sidebar-item" data-view="credits-ledger">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <span>Ledger Records</span>
+          </a>
+        </li>
+        <!-- Admin-Only Settings -->
+        <li class="admin-only">
+          <a href="#" class="sidebar-item" data-view="admin-settings">
+            <i class="fa-solid fa-sliders"></i>
+            <span>System Rules</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="avatar" id="sidebar-avatar">U</div>
+          <div class="info">
+            <h4 id="sidebar-user-name">Loading...</h4>
+            <span id="sidebar-user-role">Representative</span>
+          </div>
+          <button class="btn-logout" id="btn-logout" title="Log Out"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main>
+      <!-- Topbar Header -->
+      <header>
+        <div class="header-left">
+          <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+          <div class="header-title">
+            <h2 id="current-view-title">Dashboard Overview</h2>
+            <div class="breadcrumbs">
+              <span>Mediwave Life Sciences</span> &nbsp;/&nbsp; <span id="breadcrumb-current">Dashboard</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Connection Status -->
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span id="server-status-label">RBAC Security active</span>
+          </div>
+
+          <!-- Active Representative badge in Topbar -->
+          <div class="active-badge" id="workspace-badge">
+            <i class="fa-solid fa-user-shield"></i> <span id="workspace-badge-text">Standard User</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Views Wrapper -->
+      <div class="views-container" id="views-container">
+        
+        <!-- ================= VIEW: ADMIN DASHBOARD (Controller Desk) ================= -->
+        <section id="admin-dashboard-view" class="view">
+          <!-- Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Total Credit Capital</h3>
+                <div class="metric-value" id="stat-total-credit">₹0.00</div>
+                <div class="metric-trend info-color">
+                  <i class="fa-solid fa-chart-bar"></i> <span>Company global total</span>
+                </div>
+              </div>
+              <div class="metric-icon outstanding">
+                <i class="fa-solid fa-money-bill-wave"></i>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Active Overdue Dues</h3>
+                <div class="metric-value" id="stat-overdue-credit">₹0.00</div>
+                <div class="metric-trend danger-color">
+                  <i class="fa-solid fa-triangle-exclamation"></i> <span id="stat-overdue-count">0 invoices overdue</span>
+                </div>
+              </div>
+              <div class="metric-icon overdue">
+                <i class="fa-solid fa-hourglass-half"></i>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Escalated Flag Dues</h3>
+                <div class="metric-value" id="stat-escalated-credit">₹0.00</div>
+                <div class="metric-trend danger-color">
+                  <i class="fa-solid fa-shield-halved"></i> <span id="stat-escalated-count">0 invoices flagged</span>
+                </div>
+              </div>
+              <div class="metric-icon escalated">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-info">
+                <h3>Representative Recovery Rate</h3>
+                <div class="metric-value" id="stat-recovery-rate">0.0%</div>
+                <div class="metric-trend success-color">
+                  <i class="fa-solid fa-arrow-trend-up"></i> <span>Conversion velocity</span>
+                </div>
+              </div>
+              <div class="metric-icon collected">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Grid -->
+          <div class="dashboard-grid">
+            <!-- Analytics panel -->
+            <div class="panel global-charts-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <h3>The Intelligence Engine</h3>
+                  <p>30-Day Credit Aging Analysis & Collection Timelines</p>
+                </div>
+                <div class="panel-actions">
+                  <button class="btn btn-secondary btn-sm" id="btn-admin-export-csv"><i class="fa-solid fa-file-csv"></i> Export Global CSV</button>
+                </div>
+              </div>
+              <div class="charts-container-grid">
+                <div class="chart-wrapper">
+                  <h4>Dues Aging Buckets</h4>
+                  <div class="canvas-holder">
+                    <canvas id="adminAgingChart"></canvas>
+                  </div>
+                </div>
+                <div class="chart-wrapper">
+                  <h4>30-Day Collections Trend</h4>
+                  <div class="canvas-holder">
+                    <canvas id="adminTrendChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Global audit notifications -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <h3>Global Activity Stream</h3>
+                  <p>Real-time transaction and rule logs</p>
+                </div>
+              </div>
+              <div class="alerts-list" id="admin-activity-stream">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW: USER FIELD WORKSPACE ================= -->
+        <section id="user-workspace-view" class="view">
+          <div class="user-workspace-grid">
+            <!-- Smart Entry Form -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <h3>Register Pharmacy Credit Invoice</h3>
+                  <p>Submit invoice metrics with real-time validation checks</p>
+                </div>
+              </div>
+              
+              <form id="user-credit-form">
+                <div class="form-grid">
+                  <!-- Pharmacy Vendor Dropdown -->
+                  <div class="form-group">
+                    <label for="field-vendor-id">Pharmacy Vendor <span class="required-flag">*</span></label>
+                    <select id="field-vendor-id" class="input-control" required>
+                      <option value="">Select Vendor...</option>
+                      <!-- Populated via API -->
+                    </select>
+                    <div class="error-msg-inline" id="err-vendor"></div>
+                  </div>
+
+                  <!-- Invoice Number -->
+                  <div class="form-group">
+                    <label for="field-invoice-no">Invoice Serial Number <span class="required-flag">*</span></label>
+                    <input type="text" id="field-invoice-no" class="input-control" placeholder="e.g. INV-2026-9045" required>
+                    <div class="error-msg-inline" id="err-invoice-no"></div>
+                  </div>
+
+                  <!-- Invoice Date -->
+                  <div class="form-group">
+                    <label for="field-invoice-date">Invoice Issuance Date <span class="required-flag">*</span></label>
+                    <input type="date" id="field-invoice-date" class="input-control" required>
+                    <div class="error-msg-inline" id="err-invoice-date"></div>
+                  </div>
+
+                  <!-- Due Date -->
+                  <div class="form-group">
+                    <label for="field-due-date">Due Settlement Date <span class="required-flag">*</span></label>
+                    <input type="date" id="field-due-date" class="input-control" required>
+                    <div class="error-msg-inline" id="err-due-date"></div>
+                  </div>
+
+                  <!-- Amount Due -->
+                  <div class="form-group">
+                    <label for="field-amount-due">Amount Due (INR) <span class="required-flag">*</span></label>
+                    <div class="amount-input-wrapper">
+                      <span class="currency-prefix">₹</span>
+                      <input type="number" step="0.01" min="1" id="field-amount-due" class="input-control" placeholder="0.00" required>
+                    </div>
+                    <div class="error-msg-inline" id="err-amount-due"></div>
+                  </div>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="reset" class="btn btn-secondary">Clear Inputs</button>
+                  <button type="submit" class="btn btn-primary" id="btn-submit-invoice">
+                    <i class="fa-solid fa-paper-plane"></i> Log Credit Entry
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Validation and Notification Helper Panel -->
+            <div class="panel help-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <h3>Real-time Input Guard</h3>
+                  <p>Billing rules engine constraints checker</p>
+                </div>
+              </div>
+              <div class="input-guard-rules">
+                <div class="guard-rule" id="guard-rule-vendor">
+                  <span class="status-icon"><i class="fa-solid fa-circle-question"></i></span>
+                  <span class="rule-text">Pharmacy Vendor selected from authorized Telangana index.</span>
+                </div>
+                <div class="guard-rule" id="guard-rule-invoice">
+                  <span class="status-icon"><i class="fa-solid fa-circle-question"></i></span>
+                  <span class="rule-text">Invoice serial follows alphanumeric sequence structure.</span>
+                </div>
+                <div class="guard-rule" id="guard-rule-dates">
+                  <span class="status-icon"><i class="fa-solid fa-circle-question"></i></span>
+                  <span class="rule-text">Settlement due date must occur on or after invoice issuance date.</span>
+                </div>
+                <div class="guard-rule" id="guard-rule-amount">
+                  <span class="status-icon"><i class="fa-solid fa-circle-question"></i></span>
+                  <span class="rule-text">Requested amount does not exceed the global invoice cap (₹1,50,000).</span>
+                </div>
+              </div>
+              <div class="validation-status-box" id="validation-summary-box">
+                <div class="status-title">Status: Awaiting input</div>
+                <p>Ensure all asterisks marked fields are populated to compile credentials.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW: CREDITS LEDGER (Shared View, contents dynamically scope guarded) ================= -->
+        <section id="credits-ledger-view" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <h3 id="ledger-title-text">Credits Outstanding Registry</h3>
+                <p id="ledger-subtitle-text">Scope-Guarded Access Ledger of collections and payment logs</p>
+              </div>
+              <div class="panel-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-export-ledger"><i class="fa-solid fa-download"></i> Download Export</button>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+              <div class="tabs" id="ledger-status-tabs">
+                <div class="tab active" data-filter="all">All Invoices</div>
+                <div class="tab" data-filter="active">Active Dues</div>
+                <div class="tab" data-filter="overdue">Overdue Dues</div>
+                <div class="tab" data-filter="completed">Completed</div>
+                <div class="tab" data-filter="archived">Archived</div>
+              </div>
+
+              <div class="ledger-filters-group">
+                <!-- Admin-only Field Representative Filter -->
+                <div class="filter-dropdown admin-only" style="display: none;">
+                  <select id="filter-rep-id" class="input-control select-sm">
+                    <option value="">All Representatives</option>
+                    <!-- Populated via API -->
+                  </select>
+                </div>
+                <div class="search-input-wrapper">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="ledger-search-bar" class="search-input" placeholder="Search invoices or vendors...">
+                </div>
+              </div>
+            </div>
+
+            <!-- Ledger Table -->
+            <div class="table-wrapper">
+              <table class="data-table" id="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Vendor Pharmacy</th>
+                    <th>Invoice No</th>
+                    <th>Invoice Date</th>
+                    <th>Due Date</th>
+                    <th>Days Overdue</th>
+                    <th>Assigned To</th>
+                    <th>Escalation</th>
+                    <th>Status</th>
+                    <th>Amount Due</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="ledger-table-body">
+                  <!-- Javascript rendered rows -->
+                </tbody>
+              </table>
+
+              <div class="empty-state-container" id="ledger-empty-state" style="display: none;">
+                <i class="fa-regular fa-folder-open"></i>
+                <h4>No matching credit records found</h4>
+                <p>Refine your filters, search queries, or log a new invoice to get started.</p>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+              <div class="pagination-info" id="ledger-pagination-info">Showing 0 to 0 of 0 records</div>
+              <div class="pagination-buttons">
+                <button class="btn btn-secondary btn-sm" id="ledger-prev" disabled><i class="fa-solid fa-chevron-left"></i> Prev</button>
+                <button class="btn btn-secondary btn-sm" id="ledger-next" disabled>Next <i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW: ADMIN SETTINGS (Business Rules Config) ================= -->
+        <section id="admin-settings-view" class="view">
+          <div class="settings-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <h3>System Billing Engine Settings</h3>
+                  <p>Define transaction thresholds and aging parameters</p>
+                </div>
+              </div>
+              
+              <form id="admin-rules-form">
+                <div class="rules-setting-list">
+                  <div class="rule-setting-row">
+                    <div class="rule-description">
+                      <h4>Escalation Age Ceiling</h4>
+                      <p>Number of days an invoice can remain unpaid before triggering the high-risk Escalation flag.</p>
+                    </div>
+                    <div class="rule-input-field">
+                      <input type="number" min="1" max="180" id="rule-escalation-days" class="input-control" value="30" required>
+                      <span class="input-unit-label">Days</span>
+                    </div>
+                  </div>
+
+                  <div class="rule-setting-row">
+                    <div class="rule-description">
+                      <h4>Maximum Invoice Credit Limit</h4>
+                      <p>Single invoice principal cap. Prevents representatives from creating high-value exposures.</p>
+                    </div>
+                    <div class="rule-input-field">
+                      <input type="number" min="1000" step="1000" id="rule-credit-limit" class="input-control" value="150000" required>
+                      <span class="input-unit-label">INR</span>
+                    </div>
+                  </div>
+
+                  <div class="rule-setting-row">
+                    <div class="rule-description">
+                      <h4>Auto-Archive Closed files</h4>
+                      <p>Number of days after an invoice is paid in full before it is moved to system archives.</p>
+                    </div>
+                    <div class="rule-input-field">
+                      <input type="number" min="1" max="90" id="rule-archive-days" class="input-control" value="15" required>
+                      <span class="input-unit-label">Days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions-row" style="margin-top: 24px;">
+                  <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Engine Configurations</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right Column: Profile Settings & Database Diagnostics -->
+            <div class="settings-right-col" style="display: flex; flex-direction: column; gap: 24px;">
+              <!-- Admin Account Profile Details -->
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title">
+                    <h3>Admin Profile Settings</h3>
+                    <p>Update administrator credentials and profile details</p>
+                  </div>
+                </div>
+                <form id="admin-profile-form" style="margin-top: 16px;">
+                  <div class="form-group" style="margin-bottom: 14px;">
+                    <label for="admin-profile-name" style="font-size: 11px; margin-bottom: 6px; display: block; color: var(--text-secondary);">Full Name</label>
+                    <input type="text" id="admin-profile-name" class="input-control" required style="width: 100%;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 14px;">
+                    <label for="admin-profile-email" style="font-size: 11px; margin-bottom: 6px; display: block; color: var(--text-secondary);">Email Address</label>
+                    <input type="email" id="admin-profile-email" class="input-control" required style="width: 100%;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 18px;">
+                    <label for="admin-profile-password" style="font-size: 11px; margin-bottom: 6px; display: block; color: var(--text-secondary);">New Password (Access Key)</label>
+                    <input type="password" id="admin-profile-password" class="input-control" placeholder="Leave blank to keep current" style="width: 100%;">
+                  </div>
+                  
+                  <div id="admin-profile-status" class="login-error-msg" style="display: none; padding: 8px 12px; font-size: 11px; border-radius: 6px; margin-bottom: 16px; align-items: center; gap: 8px;"></div>
+
+                  <div class="form-actions-row">
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-user-gear"></i> Update Profile Details</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Database Seeding Tools -->
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title">
+                    <h3>System Database Diagnostics</h3>
+                    <p>Execute audit log purges and database resets</p>
+                  </div>
+                </div>
+                <div class="diagnostic-actions">
+                  <p>Perform diagnostic cleanups of security databases. These tools write directly to the system transaction registers.</p>
+                  <div class="diagnostic-btn-group">
+                    <button class="btn btn-danger btn-block" id="btn-purge-audits"><i class="fa-solid fa-trash-can"></i> Purge Security Audit Trail</button>
+                    <button class="btn btn-secondary btn-block" id="btn-reset-db"><i class="fa-solid fa-rotate"></i> Factory Database Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= VIEW: 403 ACCESS DENIED OVERLAY ================= -->
+        <section id="forbidden-view" class="view">
+          <div class="forbidden-card-container">
+            <div class="forbidden-icon-pulse">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h2>403 ACCESS FORBIDDEN</h2>
+            <h3>RBAC Security Policy Violation</h3>
+            <p>Your cleared session credentials do not contain authorization profiles to access this page dashboard.</p>
+            <div class="rbac-error-details">
+              <span>Required Role:</span> <strong>Administrator (Read/Write Configs)</strong><br>
+              <span>Your Assigned Profile:</span> <strong id="forbidden-user-role">Representative</strong>
+            </div>
+            <button class="btn btn-primary" id="btn-forbidden-return">
+              <i class="fa-solid fa-arrow-left"></i> Safe Return to Workspace
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ================= DETAIL DRAWERS BACKDROP ================= -->
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <!-- ================= INVOICE DETAILS DRAWER ================= -->
+    <div class="drawer" id="invoice-detail-drawer">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <h3 id="drawer-vendor-name">Pharmacy Name</h3>
+          <p id="drawer-invoice-sub">Invoice Serial: #INV-2026-9045</p>
+        </div>
+        <button class="btn-drawer-close" id="btn-drawer-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="drawer-body">
+        <!-- Badges summary -->
+        <div class="drawer-badge-row">
+          <span class="badge" id="drawer-status-badge">Active</span>
+          <span class="badge escalation-flag" id="drawer-escalation-badge">Escalated</span>
+        </div>
+
+        <!-- Section: Invoice info -->
+        <div class="drawer-section">
+          <h4>Ledger Metrics</h4>
+          <div class="drawer-grid">
+            <div class="drawer-cell">
+              <span class="lbl">Invoice Date</span>
+              <span class="val" id="drawer-invoice-date">01-May-2026</span>
+            </div>
+            <div class="drawer-cell">
+              <span class="lbl">Due Settlement Date</span>
+              <span class="val" id="drawer-due-date">31-May-2026</span>
+            </div>
+            <div class="drawer-cell">
+              <span class="lbl">Days Overdue</span>
+              <span class="val" id="drawer-overdue-days">0 days</span>
+            </div>
+            <div class="drawer-cell">
+              <span class="lbl">Assigned Rep</span>
+              <span class="val" id="drawer-assigned-user">Unassigned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Balance breakdown -->
+        <div class="drawer-section">
+          <h4>Ledger Balances</h4>
+          <div class="balance-strip">
+            <div class="strip-item">
+              <span class="lbl">Total Invoiced</span>
+              <span class="val" id="drawer-total-amount">₹0.00</span>
+            </div>
+            <div class="strip-item text-success-color">
+              <span class="lbl">Total Recovered</span>
+              <span class="val" id="drawer-recovered-amount">₹0.00</span>
+            </div>
+            <div class="strip-item text-primary-color">
+              <span class="lbl">Outstanding Net</span>
+              <span class="val" id="drawer-outstanding-amount">₹0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Payment Form (Staff/Admin Only, hidden dynamically) -->
+        <div class="drawer-section" id="drawer-payment-input-area">
+          <h4>Log Recovery Settlement</h4>
+          <form id="drawer-log-payment-form">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="drawer-pay-amount">Amount Received (INR) <span class="required-flag">*</span></label>
+                <input type="number" step="0.01" min="1" id="drawer-pay-amount" class="input-control" placeholder="0.00" required>
+                <div class="error-msg-inline" id="err-drawer-pay-amount"></div>
+              </div>
+              <div class="form-group">
+                <label for="drawer-pay-date">Collection Date <span class="required-flag">*</span></label>
+                <input type="date" id="drawer-pay-date" class="input-control" required>
+              </div>
+              <div class="form-group">
+                <label for="drawer-pay-method">Payment Instrument <span class="required-flag">*</span></label>
+                <select id="drawer-pay-method" class="input-control" required>
+                  <option value="UPI">UPI Transfer</option>
+                  <option value="Bank Transfer">RTGS / NEFT / IMPS</option>
+                  <option value="Cheque">Corporate Cheque</option>
+                  <option value="Cash">Cash Deposit</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-sm btn-block" style="margin-top: 12px;">
+              <i class="fa-solid fa-receipt"></i> Log Transaction Receipt
+            </button>
+          </form>
+        </div>
+
+        <!-- Section: Payment History -->
+        <div class="drawer-section">
+          <h4>Collection Transaction History</h4>
+          <div class="drawer-payment-list" id="drawer-payment-history-list">
+            <!-- Populated via Javascript -->
+          </div>
+        </div>
+
+        <!-- Section: Invoice specific audit log trail -->
+        <div class="drawer-section">
+          <h4>Record Ledger Audit History</h4>
+          <div class="drawer-audit-logs" id="drawer-audit-logs-list">
+            <!-- Populated via Javascript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="drawer-footer">
+        <button class="btn btn-secondary btn-sm" id="btn-drawer-print"><i class="fa-solid fa-print"></i> Print Details</button>
+        <!-- Admin-only override buttons -->
+        <button class="btn btn-primary btn-sm admin-only" id="btn-drawer-edit"><i class="fa-solid fa-pen-to-square"></i> Modify Record</button>
+        <button class="btn btn-danger btn-sm admin-only" id="btn-drawer-archive" style="display: none;"><i class="fa-solid fa-box-archive"></i> Archive Record</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
