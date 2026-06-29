@@ -1,0 +1,12 @@
+{
+  "name": "mediwave-pharmacy-tracker-root",
+  "version": "1.0.0",
+  "description": "Root configurations for Mediwave Pharmacy Tracker",
+  "scripts": {
+    "dev": "npm run dev --prefix Backend",
+    "start": "npm start --prefix Backend",
+    "install-backend": "npm install --prefix Backend"
+  },
+  "author": "Antigravity",
+  "license": "ISC"
+}
