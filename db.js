@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 
-const DB_PATH = path.join(__dirname, 'mediwave_pharmacy.db');
+const DB_PATH = process.env.DATABASE_PATH || path.join(__dirname, 'mediwave_pharmacy.db');
 
 // Connect to SQLite Database
 const db = new sqlite3.Database(DB_PATH, (err) => {

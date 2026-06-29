@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mediwave-pharmacy-tracker
+    runtime: node
+    rootDir: Backend
+    buildCommand: "npm install && mkdir -p public && cp -r ../Frontend/* public/"
+    startCommand: "npm start"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DATABASE_PATH
+        value: /data/mediwave_pharmacy.db
+    disk:
+      name: sqlite-db-disk
+      mountPath: /data
+      sizeGB: 1

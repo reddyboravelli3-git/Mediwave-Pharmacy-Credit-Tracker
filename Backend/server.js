@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const { db, initDatabase, seedDatabase, resetDatabase } = require('./db');
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 const JWT_SECRET = 'mediwave-secret-rbac-key-2026-secure';
 
 // Anchor Date Mock (June 24, 2026)
