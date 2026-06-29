@@ -62,7 +62,7 @@ async function initApp() {
 // API REQUEST HELPER WITH RBAC HEADERS
 // ==========================================================================
 async function apiCall(endpoint, options = {}) {
-  const url = `${window.location.origin}${endpoint}`;
+  const url = `https://mediwave-pharmacy-credit-tracker.onrender.com${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
