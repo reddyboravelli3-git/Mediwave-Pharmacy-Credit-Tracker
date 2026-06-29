@@ -18,6 +18,7 @@ app.use(express.json());
 
 // Serve static frontend assets
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../Frontend')));
 
 // Initialize database schema and seed
 initDatabase()

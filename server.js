@@ -19,7 +19,16 @@ app.use(express.json());
 
 // Serve static frontend assets
 app.use(express.static(__dirname));
-app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
+app.use(express.static(path.join(__dirname, 'Frontend')));
+app.get('/', (req, res) => {
+  const fs = require('fs');
+  const indexInRoot = path.join(__dirname, 'index.html');
+  if (fs.existsSync(indexInRoot)) {
+    res.sendFile(indexInRoot);
+  } else {
+    res.sendFile(path.join(__dirname, 'Frontend', 'index.html'));
+  }
+});
 
 // Initialize database schema and seed
 initDatabase()
