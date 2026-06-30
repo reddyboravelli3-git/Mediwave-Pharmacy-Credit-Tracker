@@ -43,7 +43,7 @@ async function initApp() {
   // Direct the user straight to the login gate if no token or user session is active
   if (!token || !currentUser) {
     document.getElementById('app-layout').style.display = 'none';
-    document.getElementById('login-gate').style.display = 'block';
+    document.getElementById('login-gate').style.display = 'flex';
     return;
   }
 
@@ -61,7 +61,7 @@ async function initApp() {
     
     // Show login gate manually and hide the app layout
     document.getElementById('app-layout').style.display = 'none';
-    document.getElementById('login-gate').style.display = 'block';
+    document.getElementById('login-gate').style.display = 'flex';
     
     // Show a warning message to the user
     const loginErrorBox = document.getElementById('login-error');
