@@ -40,6 +40,14 @@ async function initApp() {
   bindDiagnostics();
   bindDrawer();
 
+  // Clear any existing legacy development mock tokens to force credential login
+  if (token && token.startsWith('mock-jwt-token-for-user-id-')) {
+    token = null;
+    currentUser = null;
+    localStorage.removeItem('mediwave_token');
+    localStorage.removeItem('mediwave_user');
+  }
+
   // Direct the user straight to the login gate if no token or user session is active
   if (!token || !currentUser) {
     document.getElementById('app-layout').style.display = 'none';
