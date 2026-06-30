@@ -40,12 +40,11 @@ async function initApp() {
   bindDiagnostics();
   bindDrawer();
 
-  // Automatic authentication bypass to grant full Admin access to everyone
+  // Direct the user straight to the login gate if no token or user session is active
   if (!token || !currentUser) {
-    token = 'mock-jwt-token-for-user-id-1-role-admin';
-    currentUser = { id: 1, email: 'admin@gmail.com', name: 'Sahitya Reddy', role: 'admin' };
-    localStorage.setItem('mediwave_token', token);
-    localStorage.setItem('mediwave_user', JSON.stringify(currentUser));
+    document.getElementById('app-layout').style.display = 'none';
+    document.getElementById('login-gate').style.display = 'block';
+    return;
   }
 
   try {
