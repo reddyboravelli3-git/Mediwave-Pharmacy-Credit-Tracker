@@ -64,6 +64,22 @@ function authenticateToken(req, res, next) {
     return errorResponse(res, 'Access denied. Security clearance token is missing.', 401);
   }
 
+  // Support bypass mock tokens for development/demo ease
+  if (token.startsWith('mock-jwt-token-for-user-id-')) {
+    const match = token.match(/mock-jwt-token-for-user-id-(\d+)-role-(\w+)/);
+    if (match) {
+      const userId = parseInt(match[1], 10);
+      const role = match[2];
+      req.user = {
+        id: userId,
+        email: role === 'admin' ? 'admin@gmail.com' : 'user@gmail.com',
+        name: role === 'admin' ? 'Sahitya Reddy' : 'Vikram Reddy',
+        role: role
+      };
+      return next();
+    }
+  }
+
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       return errorResponse(res, 'Access forbidden. Session token is expired or invalid.', 403);

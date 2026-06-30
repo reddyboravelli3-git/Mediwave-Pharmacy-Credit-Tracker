@@ -53,8 +53,24 @@ async function initApp() {
     await loadInitialData();
     showLayout();
   } catch (err) {
-    console.warn("Session expired or server unavailable. Redirecting to login gate.");
-    logout();
+    console.warn("Session expired or server unavailable. Redirecting to login gate.", err);
+    // Safe clean-up of local variables and localStorage without calling reload
+    token = null;
+    currentUser = null;
+    localStorage.removeItem('mediwave_token');
+    localStorage.removeItem('mediwave_user');
+    
+    // Show login gate manually and hide the app layout
+    document.getElementById('app-layout').style.display = 'none';
+    document.getElementById('login-gate').style.display = 'block';
+    
+    // Show a warning message to the user
+    const loginErrorBox = document.getElementById('login-error');
+    const loginErrorText = document.getElementById('login-error-text');
+    if (loginErrorBox && loginErrorText) {
+      loginErrorText.textContent = "Server connection failed or session expired. Please verify connection and try again.";
+      loginErrorBox.style.display = 'flex';
+    }
   }
 }
 
